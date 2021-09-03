@@ -2,83 +2,71 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 /*
-*
-4
--1 0 0 1
-3
-correct : 2
-answer : 1
-* */
+ * Title : 트리
+ * 어렵게 생각한 결과 못풀었음
+ * */
 public class Baek_1068 {
 
-  static int ans;
+  static int N, ans, root;
 
-  static int[] parent = new int[50];
+  static boolean[] visit;
 
-  static ArrayList[] tree;
+  static ArrayList<Integer>[] adj;
 
   public static void main(String[] args) throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-    int N = Integer.parseInt(br.readLine());
-    tree = new ArrayList[50];
-    //    for (int i = 0; i < 50; i++) {
-    //      tree[i] = new ArrayList();
-    //    }
-
+    N = Integer.parseInt(br.readLine());
+    adj = new ArrayList[N + 1];
+    visit = new boolean[N + 1];
+    for (int i = 0; i < adj.length; i++) {
+      adj[i] = new ArrayList<>();
+    }
     StringTokenizer st = new StringTokenizer(br.readLine());
-
-    int rootIdx = -1;
     for (int i = 0; i < N; i++) {
       int tmp = Integer.parseInt(st.nextToken());
-
-      if (tmp == -1) {
-        rootIdx = i;
-        continue;
-      }
-
-      if (tree[tmp] == null)
-        tree[tmp] = new ArrayList<>();
-
-      parent[i] = tmp;
-      tree[tmp].add(i);
+      if (tmp == -1)
+        root = i;
+      else
+        adj[tmp].add(i);
     }
-
-    int RM = Integer.parseInt(br.readLine());
-
-    tree[RM] = null;
-    tree[parent[RM]].remove(RM);  // RM부모에서 RM을 제거
-
-    if (RM == rootIdx)
-      ans = 0;
-    else {
-      int tas = getLeaf(tree[rootIdx]);
-      System.out.println("tas: " + tas);
-      if (tas == 0) {
-        ans = tree[rootIdx].size();
-      } else {
-        ans = tas;
-      }
-    }
-
+    int rm = Integer.parseInt(br.readLine());
+    visit[rm] = true;
+    func();
     System.out.println(ans);
   }
 
-  public static int getLeaf(ArrayList<Integer> list) {
-    if (list == null)
-      return 0;
+  public static void func() {
+    Queue<Integer> q = new LinkedList<>();
+    q.add(root);
+    // root 노드를 지웠을 경우 처리
+    if (visit[root])
+      return;
+    visit[root] = true;
 
-    if (list.size() == 0)
-      return 1;
+    while (!q.isEmpty()) {
+      int tcur = q.poll();
 
-    int tmp = 0;
-    for (int i = 0; i < list.size(); i++) {
-      tmp += getLeaf(tree[list.get(i)]);
+      int cnt = 0;
+      for (int i = 0; i < adj[tcur].size(); i++) {
+        int tmp = adj[tcur].get(i);
+        if (!visit[tmp]) {
+          q.add(tmp);
+          visit[tmp] = true;
+          cnt++;
+        }
+      }
+
+      if (cnt == 0) {
+        // tcur is leaf node
+        ans++;
+      }
     }
 
-    return tmp;
   }
+
 }
