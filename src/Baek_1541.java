@@ -1,9 +1,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
  * Title : 잃어버린 괄호
@@ -18,10 +18,25 @@ public class Baek_1541 {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     String input = br.readLine();
 
-    Integer[] numbers = Arrays.stream(input.split("\\+")).flatMap(s -> Arrays.stream(s.split("\\-"))).map(s -> Integer.parseInt(s)).toArray(Integer[]::new);
-    List<Integer> exps = new ArrayList<>();
-    answer = numbers[0];
+    List<Integer> numbers = Arrays.stream(input.split("\\+")).map(s -> s.split("-")).flatMap(Arrays::stream).map(Integer::parseInt).collect(Collectors.toList());
 
+    int idx = 1;
+    for (var ch : input.toCharArray()) {
+      if (ch == '-') {
+        break;
+      } else if (ch == '+') {
+        idx++;
+      }
+    }
+
+    for (int i = 0; i < idx; i++) {
+      answer += numbers.get(i);
+    }
+
+    for (int i = idx; i < numbers.size(); i++) {
+      answer -= numbers.get(i);
+    }
+    System.out.println(answer);
   }
 
 }
